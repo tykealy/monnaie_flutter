@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:monnaie/widgets/daily_spent_items.dart';
 
 class HistoryList extends StatefulWidget {
-  const HistoryList({Key? key}) : super(key: key);
+  const HistoryList({super.key});
 
   @override
   HistoryListState createState() => HistoryListState();
@@ -27,7 +28,7 @@ class HistoryListState extends State<HistoryList> {
           const Text("History"),
           Container(
               margin: const EdgeInsets.only(top: 10),
-              height: 450,
+              height: 400,
               decoration: BoxDecoration(
                 color: const Color(0xFFf3ebea),
                 borderRadius: BorderRadius.circular(10),
@@ -36,11 +37,11 @@ class HistoryListState extends State<HistoryList> {
                 ),
               ),
               child: ListView(children: [
-                DailySpentItem(
+                DailySpentItems(
                   items: items,
                   date: "04 June",
                 ),
-                DailySpentItem(
+                DailySpentItems(
                   items: items,
                   date: "04 July",
                 )
@@ -51,16 +52,7 @@ class HistoryListState extends State<HistoryList> {
   }
 }
 
-class DailySpentItem extends StatefulWidget {
-  final String date;
-  final List<Map<String, String>> items;
-
-  const DailySpentItem({super.key, required this.items, required this.date});
-  @override
-  DailySpentItemState createState() => DailySpentItemState();
-}
-
-class DailySpentItemState extends State<DailySpentItem> {
+class DailySpentItemsState extends State<DailySpentItems> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -89,12 +81,12 @@ class SpentItem extends StatelessWidget {
   final String category;
 
   const SpentItem({
-    Key? key,
+    super.key,
     required this.title,
     required this.time,
     required this.amount,
     required this.category,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

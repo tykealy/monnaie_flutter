@@ -1,3 +1,4 @@
 {
-  "workbench.colorTheme": "Dracula"
+  "workbench.colorTheme": "Monokai Pro (Filter Spectrum)",
+  "java.configuration.updateBuildConfiguration": "interactive"
 }
