@@ -70,6 +70,7 @@ class MyHomePage extends StatelessWidget {
             ),
             SpendingList(
               name: 'Monthly',
+              maxHeight: 0,
             ),
           ],
         )),
