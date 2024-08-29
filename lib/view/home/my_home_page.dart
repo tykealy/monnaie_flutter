@@ -61,14 +61,18 @@ class MyHomePage extends StatelessWidget {
           forceMaterialTransparency: true,
           backgroundColor: const Color(0xFFebdedc),
         ),
-        body: ListView(
-          children: const <Widget>[
+        body: const SingleChildScrollView(
+            child: Column(
+          children: [
             SpentCard(),
             SpendingList(
               name: 'Weekly',
             ),
+            SpendingList(
+              name: 'Monthly',
+            ),
           ],
-        ),
+        )),
         bottomNavigationBar: Container(
           decoration: const BoxDecoration(
             border: Border(
