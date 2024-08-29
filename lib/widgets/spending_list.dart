@@ -4,8 +4,10 @@ import 'package:monnaie/widgets/spending_item.dart';
 
 class SpendingList extends StatefulWidget {
   final String name;
+  final double maxHeight;
   const SpendingList({
     super.key,
+    this.maxHeight = 250,
     required this.name,
   });
 
@@ -19,7 +21,7 @@ class SpendingListState extends State<SpendingList> {
     SpendingData(icon: '🍺', name: 'Pherk', budgeted: 20, left: 18),
     SpendingData(icon: '🪙', name: 'Crypto', budgeted: 55, left: 55),
     SpendingData(icon: '🍔', name: 'Burger', budgeted: 50, left: 30),
-    // SpendingData(icon: '🛒', name: 'Groceries', budgeted: 200, left: 150),
+    SpendingData(icon: '🛒', name: 'Groceries', budgeted: 200, left: 150),
   ];
 
   bool isExpanded = true;
@@ -63,9 +65,9 @@ class SpendingListState extends State<SpendingList> {
             duration: const Duration(milliseconds: 150), // Faster animation
             firstChild: Container(),
             secondChild: Container(
-              constraints: const BoxConstraints(
-                maxHeight: 250,
-              ),
+              constraints: widget.maxHeight > 0
+                  ? BoxConstraints(maxHeight: widget.maxHeight)
+                  : null,
               child: SingleChildScrollView(
                 child: Column(
                   children: spendingItems.map((item) {
