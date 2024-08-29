@@ -32,7 +32,7 @@ class AddScreenState extends State<AddScreen> {
     return SingleChildScrollView(
       child: Container(
         decoration: const BoxDecoration(
-          color: Color(0xFFebdedc),
+          color: Colors.white,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),

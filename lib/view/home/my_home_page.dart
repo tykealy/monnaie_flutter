@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logger/logger.dart';
 import 'package:monnaie/widgets/add_screen.dart';
-import 'package:monnaie/widgets/history_list.dart';
+import 'package:monnaie/widgets/spending_list.dart';
 import 'package:monnaie/widgets/spent_card.dart';
 
 class MyHomePage extends StatelessWidget {
@@ -28,24 +28,32 @@ class MyHomePage extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-          leadingWidth: 80,
-          leading: IconButton(
-            icon: CircleAvatar(
-              backgroundImage: NetworkImage(photoUrl),
-            ),
-            onPressed: () {
+          leadingWidth: 70,
+          leading: GestureDetector(
+            onTap: () {
               handleSignOut();
             },
+            child: Container(
+              margin: const EdgeInsets.only(left: 22),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(),
+              ),
+              child: CircleAvatar(
+                radius: 5,
+                backgroundImage: NetworkImage(photoUrl),
+              ),
+            ),
           ),
           centerTitle: false,
           title: Row(
             children: [
               Transform.translate(
                 offset: const Offset(
-                    -24, 8), // Adjust to move title closer to leading
+                    -6, 12), // Adjust to move title closer to leading
                 child: Text(
-                  "Hi, $title",
-                  style: const TextStyle(color: Colors.black, fontSize: 18),
+                  "Bonjour, $title",
+                  style: const TextStyle(color: Colors.black, fontSize: 16),
                 ),
               ),
             ],
@@ -56,7 +64,9 @@ class MyHomePage extends StatelessWidget {
         body: ListView(
           children: const <Widget>[
             SpentCard(),
-            HistoryList(),
+            SpendingList(
+              name: 'Weekly',
+            ),
           ],
         ),
         bottomNavigationBar: Container(

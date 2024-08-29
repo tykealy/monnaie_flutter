@@ -7,10 +7,10 @@ class SpentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(15.0),
+      padding: const EdgeInsets.all(10.0),
       child: Container(
         decoration: BoxDecoration(
-            color: const Color(0xFFf3ebea),
+            color: const Color(0xFFebdedc),
             borderRadius: BorderRadius.circular(10)),
         child: Row(
           children: [
@@ -27,24 +27,40 @@ class SpentCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text("Total Spent"),
+                        const Text(
+                          "Total Spent",
+                          style: TextStyle(fontSize: 13),
+                        ),
                         const Text(
                           "7777\$",
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 25),
+                              fontWeight: FontWeight.bold, fontSize: 24),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Container(
                               margin: const EdgeInsets.only(top: 15),
-                              child:
-                                  SpentCardButton(label: "Swap", action: () {}),
+                              child: StyledButton(
+                                  label: "Budget",
+                                  action: () {},
+                                  width: 145,
+                                  icon: const Icon(
+                                    Icons.edit_outlined,
+                                    size: 18,
+                                  )),
                             ),
                             Container(
                               margin: const EdgeInsets.only(top: 15),
-                              child: SpentCardButton(
-                                  label: "Category", action: () {}),
+                              child: StyledButton(
+                                label: "Category",
+                                action: () {},
+                                width: 145,
+                                icon: const Icon(
+                                  Icons.add,
+                                  size: 20,
+                                ),
+                              ),
                             ),
                           ],
                         )

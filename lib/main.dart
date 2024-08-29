@@ -27,10 +27,11 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false, // Add this line
         theme: ThemeData(
           colorScheme: ThemeData().colorScheme.copyWith(
-                primary: const Color(
-                    0xFFfdbf1e), // Change the color of the date picker here
-              ),
-          scaffoldBackgroundColor: const Color(0xFFebdedc),
+              primary: const Color(
+                  0xFFfdbf1e), // Change the color of the date picker here
+              onPrimary: const Color(0xFF000000),
+              onBackground: const Color(0xFFebdedc)),
+          scaffoldBackgroundColor: const Color(0xFFf3ebea),
           useMaterial3: true,
           inputDecorationTheme: const InputDecorationTheme(
             labelStyle: TextStyle(color: Colors.black),
@@ -177,7 +178,7 @@ class SpentFormState extends State<SpentForm> {
             ),
             Container(
               margin: const EdgeInsets.all(20),
-              child: SpentCardButton(
+              child: StyledButton(
                   action: () => submitHandler(_formKey, context),
                   label: "Submit"),
             ),
