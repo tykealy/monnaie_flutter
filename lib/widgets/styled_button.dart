@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 
-class SpentCardButton extends StatefulWidget {
+class StyledButton extends StatefulWidget {
   final String label;
   final Function action;
   final double width;
+  final Icon? icon;
 
-  const SpentCardButton(
+  const StyledButton(
       {super.key,
       required this.action,
       required this.label,
-      this.width = 130.0});
+      this.width = 130.0,
+      this.icon});
 
   @override
-  SpentCardButtonState createState() => SpentCardButtonState();
+  StyledButtonState createState() => StyledButtonState();
 }
 
-class SpentCardButtonState extends State<SpentCardButton> {
+class StyledButtonState extends State<StyledButton> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -39,6 +41,7 @@ class SpentCardButtonState extends State<SpentCardButton> {
             widget.action();
           },
           style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
@@ -48,9 +51,20 @@ class SpentCardButtonState extends State<SpentCardButton> {
                 const Color(0xFFfdbf1e),
               ), // Make the button background transparent
               elevation: MaterialStateProperty.all(0)),
-          child: Text(
-            widget.label,
-            style: const TextStyle(color: Colors.black),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (widget.icon != null) widget.icon!,
+              const SizedBox(
+                width: 5,
+              ),
+              Text(
+                widget.label,
+                style: const TextStyle(
+                  fontSize: 13,
+                ),
+              ),
+            ],
           ),
         ),
       ),
