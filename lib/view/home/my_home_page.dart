@@ -63,7 +63,7 @@ class MyHomePage extends StatelessWidget {
         ),
         body: const SingleChildScrollView(
             child: Column(
-          children: [
+          children: <Widget>[
             SpentCard(),
             SpendingList(
               name: 'Weekly',
@@ -97,8 +97,10 @@ class MyHomePage extends StatelessWidget {
             onTap: (index) {
               if (index == 1) {
                 showModalBottomSheet(
+                  isDismissible: false,
+                  backgroundColor: Colors.white,
                   elevation: 5,
-                  showDragHandle: false,
+                  showDragHandle: true,
                   context: context,
                   builder: (context) {
                     return Padding(

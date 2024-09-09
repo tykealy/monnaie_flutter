@@ -74,7 +74,7 @@ class SpendingListState extends State<SpendingList> {
                     return SpendingItem(
                       icon: item.icon,
                       name: item.name,
-                      bdugeted: item.budgeted,
+                      budgeted: item.budgeted,
                       left: item.left,
                     );
                   }).toList(),

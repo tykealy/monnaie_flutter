@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:monnaie/view/categories_page/categories_page.dart';
 import 'package:monnaie/widgets/styled_button.dart';
 
 class SpentCard extends StatelessWidget {
@@ -54,7 +55,15 @@ class SpentCard extends StatelessWidget {
                               margin: const EdgeInsets.only(top: 15),
                               child: StyledButton(
                                 label: "Category",
-                                action: () {},
+                                action: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        fullscreenDialog: true,
+                                        builder: (context) =>
+                                            const CategoriesPage()),
+                                  );
+                                },
                                 width: 145,
                                 icon: const Icon(
                                   Icons.add,
