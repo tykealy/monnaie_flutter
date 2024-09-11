@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 class SpendingItem extends StatefulWidget {
   final String icon;
   final String name;
-  final double bdugeted;
+  final double budgeted;
   final double left;
 
   const SpendingItem({
     super.key,
     required this.icon,
     required this.name,
-    required this.bdugeted,
+    required this.budgeted,
     required this.left,
   });
 
@@ -61,7 +61,7 @@ class _SpendingItemState extends State<SpendingItem> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '${widget.bdugeted}\$',
+                      '${widget.budgeted}\$',
                       style: const TextStyle(fontSize: 13),
                     ),
                   ],

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:monnaie/main.dart';
+import 'package:monnaie/spentForm/spent_form.dart';
 
 class AddScreen extends StatefulWidget {
   const AddScreen({super.key});
@@ -30,32 +30,31 @@ class AddScreenState extends State<AddScreen> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Center(
-              child: Container(
-                width: 35,
-                height: 4,
-                margin: const EdgeInsets.only(top: 12, bottom: 16),
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(2.5),
-                ),
-              ),
+      child: Column(
+        children: <Widget>[
+          // Center(
+          //   child: Container(
+          //     width: 80,
+          //     height: 4,
+          //     margin: const EdgeInsets.only(top: 12, bottom: 16),
+          //     decoration: BoxDecoration(
+          //       color: Colors.black,
+          //       borderRadius: BorderRadius.circular(2.5),
+          //     ),
+          //   ),
+          // ),
+          const Text(
+            'Add Expense',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
             ),
-            Container(
-                padding: const EdgeInsets.all(15), child: const SpentForm())
-          ],
-        ),
+          ),
+          const Text('Enter your details here',
+              style: TextStyle(color: Colors.grey)),
+          const SizedBox(height: 10),
+          Container(padding: const EdgeInsets.all(15), child: const SpentForm())
+        ],
       ),
     );
   }
