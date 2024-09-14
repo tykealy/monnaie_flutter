@@ -32,17 +32,6 @@ class AddScreenState extends State<AddScreen> {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          // Center(
-          //   child: Container(
-          //     width: 80,
-          //     height: 4,
-          //     margin: const EdgeInsets.only(top: 12, bottom: 16),
-          //     decoration: BoxDecoration(
-          //       color: Colors.black,
-          //       borderRadius: BorderRadius.circular(2.5),
-          //     ),
-          //   ),
-          // ),
           const Text(
             'Add Expense',
             style: TextStyle(
