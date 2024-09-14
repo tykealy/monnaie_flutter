@@ -54,7 +54,8 @@ class StyledButtonState extends State<StyledButton> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (widget.icon != null) widget.icon!,
-              if (widget.label != null) const SizedBox(width: 5),
+              if (widget.icon != null && widget.label != null)
+                const SizedBox(width: 5),
               if (widget.label != null)
                 Text(
                   widget.label!,

@@ -5,18 +5,22 @@ import 'package:logger/logger.dart';
 import 'package:monnaie/widgets/add_screen.dart';
 import 'package:monnaie/widgets/spending_list.dart';
 import 'package:monnaie/widgets/spent_card.dart';
+import '../../service/category_service.dart';
+import '../../models/category_data.dart';
 
 class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key, required this.title, required this.photoUrl});
+  const MyHomePage({
+    super.key,
+    required this.title,
+    required this.photoUrl,
+  });
   final String title;
   final String photoUrl;
-
   @override
   Widget build(BuildContext context) {
     final Logger logger = Logger();
     final GoogleSignIn googleSignIn = GoogleSignIn();
     final FirebaseAuth auth = FirebaseAuth.instance;
-
     Future<void> handleSignOut() async {
       try {
         await googleSignIn.signOut(); // Sign out from Google
@@ -61,19 +65,34 @@ class MyHomePage extends StatelessWidget {
           forceMaterialTransparency: true,
           backgroundColor: const Color(0xFFebdedc),
         ),
-        body: const SingleChildScrollView(
-            child: Column(
-          children: <Widget>[
-            SpentCard(),
-            SpendingList(
-              name: 'Weekly',
-            ),
-            SpendingList(
-              name: 'Monthly',
-              maxHeight: 0,
-            ),
-          ],
-        )),
+        body: FutureBuilder<List<CategoryData>>(
+          future: CategoryService().getCategories(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text('No categories found.'));
+            } else {
+              // final categories = snapshot.data!;
+              return const SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    SpentCard(),
+                    SpendingList(
+                      name: 'Weekly',
+                    ),
+                    SpendingList(
+                      name: 'Monthly',
+                      maxHeight: 0,
+                    ),
+                  ],
+                ),
+              );
+            }
+          },
+        ),
         bottomNavigationBar: Container(
           decoration: const BoxDecoration(
             border: Border(

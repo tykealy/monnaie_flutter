@@ -44,6 +44,9 @@ dependencies:
   modal_bottom_sheet: ^2.1.2
   mobkit_dashed_border: ^0.0.6
   emoji_picker_flutter: ^1.0.9
+  uuid: ^4.5.0
+  collection: ^1.18.0
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:

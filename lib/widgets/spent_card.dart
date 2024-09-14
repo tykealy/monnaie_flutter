@@ -59,9 +59,15 @@ class SpentCard extends StatelessWidget {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        fullscreenDialog: true,
-                                        builder: (context) =>
-                                            const CategoriesPage()),
+                                      fullscreenDialog: true,
+                                      builder: (context) => PopScope(
+                                        onPopInvoked: (bool didPop) {
+                                          // Perform any action if needed
+                                          // didPop indicates whether the pop action was successful
+                                        },
+                                        child: const CategoriesPage(),
+                                      ),
+                                    ),
                                   );
                                 },
                                 width: 145,

@@ -1,4 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Import the intl package
+import 'package:monnaie/models/category_data.dart';
+import 'package:monnaie/service/category_service.dart';
 import 'package:monnaie/widgets/styled_button.dart';
 
 class SpentForm extends StatefulWidget {
@@ -22,16 +26,54 @@ class SpendingData {
 }
 
 class SpentFormState extends State<SpentForm> {
-  final List<SpendingData> spendingItems = [
-    SpendingData(icon: '☕️', name: 'Koffee', budgeted: 100, left: 20),
-    SpendingData(icon: '🍺', name: 'Pherk', budgeted: 20, left: 18),
-    SpendingData(icon: '🪙', name: 'Crypto', budgeted: 55, left: 55),
-    SpendingData(icon: '🍔', name: 'Burger', budgeted: 50, left: 30),
-    SpendingData(icon: '🛒', name: 'Groceries', budgeted: 200, left: 150),
-  ];
+  final CategoryService _categoryService = CategoryService();
   final _dateC = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  String? _selectedOption;
+  String? _selectedCategory;
+  final description = TextEditingController();
+  final amount = TextEditingController();
+
+  List<CategoryData> _categories = [];
+  bool _isLoading = true; // For loading state
+
+  Future<void> _fetchCategories() async {
+    try {
+      List<CategoryData> categories = await _categoryService.getCategories();
+      setState(() {
+        _categories = categories;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  submitHandler(GlobalKey<FormState> formKey, BuildContext context) {
+    if (formKey.currentState != null && formKey.currentState!.validate()) {
+      // Fetch the text inputs from the form controllers
+      String enteredAmount = amount.text;
+      String selectedDate = _dateC.text;
+      String enteredDescription = description.text;
+      String selectedCategory = _selectedCategory ?? 'No category selected';
+
+      if (kDebugMode) {
+        print('Amount: $enteredAmount');
+        print('Date and Time: $selectedDate');
+        print('Category: $selectedCategory');
+        print('Description: $enteredDescription');
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCategories();
+    amount.text = '0';
+    _dateC.text = DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now());
+  }
 
   Future displayDatePicker(
     BuildContext context,
@@ -56,7 +98,7 @@ class SpentFormState extends State<SpentForm> {
     if (time != null && dateTime != null) {
       setState(() {
         _dateC.text =
-            "${dateTime.toLocal().toString().split(" ")[0]} ${time.format(context)}";
+            "${DateFormat('yyyy-MM-dd').format(dateTime)} ${DateFormat('HH:mm').format(DateTime(dateTime.year, dateTime.month, dateTime.day, time.hour, time.minute))}";
       });
     }
   }
@@ -80,6 +122,7 @@ class SpentFormState extends State<SpentForm> {
                           style: TextStyle(fontWeight: FontWeight.w500),
                         ),
                         TextFormField(
+                          controller: amount,
                           onTapOutside: (event) => FocusScope.of(context)
                               .unfocus(), // Unfocus the text field
                           cursorColor: Colors.black,
@@ -158,49 +201,39 @@ class SpentFormState extends State<SpentForm> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text("Categories:"),
-                DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.only(
-                        left: 20, right: 20, top: 15, bottom: 15),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.black, // Border color
-                        width: 2.0, // Border thickness
+                _isLoading
+                    ? const CircularProgressIndicator() // Show loading indicator while fetching categories
+                    : DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.all(15),
+                          border: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 2.0),
+                            borderRadius: BorderRadius.all(Radius.circular(6)),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 2.0),
+                            borderRadius: BorderRadius.all(Radius.circular(6)),
+                          ),
+                        ),
+                        value: _categories.isNotEmpty
+                            ? _selectedCategory
+                            : null, // Ensure the value is valid
+                        items: _categories.map((CategoryData category) {
+                          return DropdownMenuItem<String>(
+                            value: category.id,
+                            child: Text("${category.icon} ${category.name}"),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedCategory = value!;
+                          });
+                        },
+                        validator: (value) =>
+                            value == null ? 'Please select a category' : null,
                       ),
-                      borderRadius: BorderRadius.all(Radius.circular(6)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.black, // Border color
-                        width: 2.0, // Border thickness
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(6)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.black, // Border color
-                        width: 2.0, // Border thickness
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(6)),
-                    ),
-                  ),
-                  value: _selectedOption,
-                  items: spendingItems.map((SpendingData option) {
-                    return DropdownMenuItem<String>(
-                      value: option.name,
-                      child: Text("${option.icon} ${option.name}"),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    _selectedOption = newValue;
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please select an option';
-                    }
-                    return null;
-                  },
-                ),
               ],
             ),
             const SizedBox(height: 10),
@@ -212,6 +245,7 @@ class SpentFormState extends State<SpentForm> {
                   style: TextStyle(fontWeight: FontWeight.w500),
                 ),
                 TextFormField(
+                  controller: description,
                   cursorColor: Colors.black,
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.only(
@@ -250,12 +284,5 @@ class SpentFormState extends State<SpentForm> {
         ),
       ),
     );
-  }
-}
-
-submitHandler(GlobalKey<FormState> formkey, context) {
-  if (formkey.currentState != null && formkey.currentState!.validate()) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Processing Datazzz')));
   }
 }
