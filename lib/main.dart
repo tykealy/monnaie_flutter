@@ -26,10 +26,11 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false, // Add this line
         theme: ThemeData(
           colorScheme: ThemeData().colorScheme.copyWith(
-              primary: const Color(
-                  0xFFfdbf1e), // Change the color of the date picker here
-              onPrimary: const Color(0xFF000000),
-              onBackground: const Color(0xFFebdedc)),
+                primary: const Color(
+                    0xFFfdbf1e), // Change the color of the date picker here
+                onPrimary: const Color(0xFF000000),
+                // onSurface: const Color(0xFFebdedc)
+              ),
           scaffoldBackgroundColor: const Color(0xFFf3ebea),
           useMaterial3: true,
           inputDecorationTheme: const InputDecorationTheme(

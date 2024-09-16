@@ -1,9 +1,10 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Import the intl package
 import 'package:monnaie/models/category_data.dart';
 import 'package:monnaie/service/category_service.dart';
+import 'package:monnaie/service/expense_record_service.dart';
 import 'package:monnaie/widgets/styled_button.dart';
+import '../models/expense_data.dart';
 
 class SpentForm extends StatefulWidget {
   const SpentForm({super.key});
@@ -26,15 +27,15 @@ class SpendingData {
 }
 
 class SpentFormState extends State<SpentForm> {
-  final CategoryService _categoryService = CategoryService();
   final _dateC = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  String? _selectedCategory;
   final description = TextEditingController();
   final amount = TextEditingController();
+  final CategoryService _categoryService = CategoryService();
+  String? _selectedCategory;
 
   List<CategoryData> _categories = [];
-  bool _isLoading = true; // For loading state
+  bool _isLoading = true;
 
   Future<void> _fetchCategories() async {
     try {
@@ -50,19 +51,29 @@ class SpentFormState extends State<SpentForm> {
     }
   }
 
-  submitHandler(GlobalKey<FormState> formKey, BuildContext context) {
+  submitHandler(GlobalKey<FormState> formKey, BuildContext context) async {
     if (formKey.currentState != null && formKey.currentState!.validate()) {
       // Fetch the text inputs from the form controllers
-      String enteredAmount = amount.text;
+      double enteredAmount = double.parse(amount.text);
       String selectedDate = _dateC.text;
       String enteredDescription = description.text;
       String selectedCategory = _selectedCategory ?? 'No category selected';
 
-      if (kDebugMode) {
-        print('Amount: $enteredAmount');
-        print('Date and Time: $selectedDate');
-        print('Category: $selectedCategory');
-        print('Description: $enteredDescription');
+      final expense = ExpenseData(
+          amount: enteredAmount,
+          date: selectedDate,
+          description: enteredDescription,
+          type: selectedCategory);
+
+      final result = ExpenseRecordService().saveExpense(expense);
+      if (await result) {
+        Navigator.of(context).pop();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to save expense'),
+          ),
+        );
       }
     }
   }

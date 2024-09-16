@@ -154,27 +154,45 @@ class _CategoryCardState extends State<CategoryCard> {
                         ));
                       },
                       config: const Config(
-                        emojiSizeMax: 32.0,
-                        verticalSpacing: 0,
-                        horizontalSpacing: 0,
-                        gridPadding: EdgeInsets.zero,
-                        initCategory: Category.SMILEYS,
-                        bgColor: Color(0xFFf3ebea),
-                        indicatorColor: Color(0xFFfdbf1e),
-                        iconColor: Colors.grey,
-                        iconColorSelected: Color(0xFFfdbf1e),
-                        backspaceColor: Colors.red,
-                        enableSkinTones: true,
-                        recentTabBehavior: RecentTabBehavior.RECENT,
-                        recentsLimit: 28,
-                        noRecents: Text(
-                          'No Recents',
-                          style: TextStyle(color: Colors.black26, fontSize: 20),
-                          textAlign: TextAlign.center,
+                        bottomActionBarConfig: BottomActionBarConfig(
+                          enabled: true,
+                          backgroundColor: Color(0xFFebdedc),
+                          buttonColor: Color(0xFFebdedc),
+                          buttonIconColor: Color(0xFFfdbf1e),
                         ),
-                        tabIndicatorAnimDuration: kTabScrollDuration,
-                        categoryIcons: CategoryIcons(),
-                        buttonMode: ButtonMode.MATERIAL,
+                        searchViewConfig: SearchViewConfig(
+                          buttonIconColor: Color(0xFFfdbf1e),
+                          backgroundColor: Color(0xFFf3ebea),
+                        ),
+                        emojiViewConfig: EmojiViewConfig(
+                          columns: 7,
+                          emojiSizeMax: 32.0,
+                          backgroundColor: Color(0xFFf3ebea),
+                          verticalSpacing: 0,
+                          horizontalSpacing: 0,
+                          buttonMode: ButtonMode.MATERIAL,
+                          gridPadding: EdgeInsets.zero,
+                          recentsLimit: 28,
+                          noRecents: Text(
+                            'No Recents',
+                            style:
+                                TextStyle(color: Colors.black26, fontSize: 20),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        skinToneConfig: SkinToneConfig(
+                          dialogBackgroundColor: Color(0xFFf3ebea),
+                        ),
+                        categoryViewConfig: CategoryViewConfig(
+                            indicatorColor: Color(0xFFfdbf1e),
+                            initCategory: Category.SMILEYS,
+                            iconColor: Colors.grey,
+                            iconColorSelected: Color(0xFFfdbf1e),
+                            backspaceColor: Colors.red,
+                            recentTabBehavior: RecentTabBehavior.RECENT,
+                            tabIndicatorAnimDuration: kTabScrollDuration,
+                            categoryIcons: CategoryIcons(),
+                            backgroundColor: Color(0xFFf3ebea)),
                       ),
                     ),
                   ),
@@ -301,7 +319,7 @@ class _CategoryCardState extends State<CategoryCard> {
                       onPressed: widget.onDelete,
                       icon: const Icon(Icons.delete_outline),
                       style: ButtonStyle(
-                        iconColor: MaterialStateProperty.resolveWith(
+                        iconColor: WidgetStateProperty.resolveWith(
                             (states) => Colors.red.shade400),
                       ),
                     ),
