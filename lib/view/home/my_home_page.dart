@@ -65,33 +65,39 @@ class MyHomePage extends StatelessWidget {
           forceMaterialTransparency: true,
           backgroundColor: const Color(0xFFebdedc),
         ),
-        body: FutureBuilder<List<CategoryData>>(
-          future: CategoryService().getCategories(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text('No categories found.'));
-            } else {
-              // final categories = snapshot.data!;
-              return const SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    SpentCard(),
-                    SpendingList(
-                      name: 'Weekly',
-                    ),
-                    SpendingList(
-                      name: 'Monthly',
-                      maxHeight: 0,
-                    ),
-                  ],
-                ),
-              );
-            }
-          },
+        body: Column(
+          children: [
+            const SpentCard(),
+            Expanded(
+              child: FutureBuilder<List<CategoryData>>(
+                future: CategoryService().getCategories(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text('No categories found.'));
+                  } else {
+                    // final categories = snapshot.data!;
+                    return const SingleChildScrollView(
+                      child: Column(
+                        children: <Widget>[
+                          SpendingList(
+                            name: 'Weekly',
+                          ),
+                          SpendingList(
+                            name: 'Monthly',
+                            maxHeight: 0,
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
         ),
         bottomNavigationBar: Container(
           decoration: const BoxDecoration(

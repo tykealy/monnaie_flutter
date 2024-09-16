@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/category_data.dart';
+import './expense_record_service.dart';
 
 class CategoryService {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -70,6 +71,60 @@ class CategoryService {
       } catch (e) {
         throw Exception('Failed to save categories: $e');
       }
+    }
+  }
+
+  Future<List<CategoryData>> getCategoriesWithExpenses(int year,
+      [int? week, int? month]) async {
+    try {
+      User? user = auth.currentUser;
+      if (user == null) {
+        throw Exception('No user is currently signed in.');
+      }
+
+      QuerySnapshot querySnapshot = await firestore
+          .collection('users')
+          .doc(user.uid)
+          .collection('categories')
+          .get();
+
+      final categories = querySnapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return CategoryData(
+          id: doc.id,
+          icon: data['icon'] ?? '',
+          name: data['name'] ?? '',
+          budget: (data['budgeted'] ?? 0).toDouble(),
+          type: data['type'] ?? '',
+        );
+      }).toList();
+
+      ExpenseRecordService expenseRecordService = ExpenseRecordService();
+
+      for (CategoryData category in categories) {
+        if (week != null) {
+          double expense =
+              await expenseRecordService.getExpenseRecordBasedOnType(
+            category.id,
+            year,
+            week,
+          );
+          category.expense = expense;
+        }
+        if (month != null) {
+          double expense =
+              await expenseRecordService.getExpenseRecordBasedOnType(
+            category.id,
+            year,
+            null,
+            month,
+          );
+          category.expense = expense;
+        }
+      }
+      return categories; // Add return statement here
+    } catch (e) {
+      return [];
     }
   }
 }

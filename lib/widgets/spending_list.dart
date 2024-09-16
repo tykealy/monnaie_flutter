@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:monnaie/models/category_data.dart';
 import 'package:monnaie/widgets/spending_header.dart';
 import 'package:monnaie/widgets/spending_item.dart';
+import '../service/category_service.dart';
 
 class SpendingList extends StatefulWidget {
   final String name;
@@ -16,15 +18,49 @@ class SpendingList extends StatefulWidget {
 }
 
 class SpendingListState extends State<SpendingList> {
-  final List<SpendingData> spendingItems = [
-    SpendingData(icon: '☕️', name: 'Koffee', budgeted: 100, left: 20),
-    SpendingData(icon: '🍺', name: 'Pherk', budgeted: 20, left: 18),
-    SpendingData(icon: '🪙', name: 'Crypto', budgeted: 55, left: 55),
-    SpendingData(icon: '🍔', name: 'Burger', budgeted: 50, left: 30),
-    SpendingData(icon: '🛒', name: 'Groceries', budgeted: 200, left: 150),
-  ];
+  late List<CategoryData> spendingItems = [];
+  int getWeekOfYear(DateTime date) {
+    DateTime firstDayOfYear = DateTime(date.year, 1, 1);
+    int dayOfYear = date.difference(firstDayOfYear).inDays + 1;
+    return (dayOfYear / 7).ceil();
+  }
+
+  int getMonth(DateTime dateTime) {
+    return dateTime.month;
+  }
+
+  int getYear(DateTime dateTime) {
+    return dateTime.year;
+  }
 
   bool isExpanded = true;
+  late int month;
+  late int week;
+  late int year;
+
+  @override
+  void initState() {
+    super.initState();
+    week = getWeekOfYear(DateTime.now());
+    month = getMonth(DateTime.now());
+    year = getYear(DateTime.now());
+
+    if (widget.name == 'Weekly') {
+      CategoryService().getCategoriesWithExpenses(year, week).then((value) {
+        setState(() {
+          spendingItems = value;
+        });
+      });
+    } else {
+      CategoryService()
+          .getCategoriesWithExpenses(year, week, month)
+          .then((value) {
+        setState(() {
+          spendingItems = value;
+        });
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,8 +110,8 @@ class SpendingListState extends State<SpendingList> {
                     return SpendingItem(
                       icon: item.icon,
                       name: item.name,
-                      budgeted: item.budgeted,
-                      left: item.left,
+                      budgeted: item.budget,
+                      left: item.expense,
                     );
                   }).toList(),
                 ),

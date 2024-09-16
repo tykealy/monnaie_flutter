@@ -43,13 +43,13 @@ class StyledButtonState extends State<StyledButton> {
             widget.action();
           },
           style: ButtonStyle(
-              padding: MaterialStateProperty.all<EdgeInsets>(
+              padding: WidgetStateProperty.all<EdgeInsets>(
                   const EdgeInsets.symmetric(vertical: 0, horizontal: 0)),
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
-              backgroundColor: MaterialStateProperty.all(
+              foregroundColor: WidgetStateProperty.all<Color>(Colors.black),
+              backgroundColor: WidgetStateProperty.all(
                 const Color(0xFFfdbf1e),
               ), // Make the button background transparent
-              elevation: MaterialStateProperty.all(0)),
+              elevation: WidgetStateProperty.all(0)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

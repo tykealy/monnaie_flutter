@@ -4,6 +4,7 @@ class CategoryData {
   final String name;
   final double budget;
   final String type;
+  late double expense;
 
   CategoryData({
     this.id = '',
