@@ -75,7 +75,7 @@ class CategoryService {
   }
 
   Future<List<CategoryData>> getCategoriesWithExpenses(int year,
-      [int? week, int? month]) async {
+      {int? week, int? month}) async {
     try {
       User? user = auth.currentUser;
       if (user == null) {
@@ -107,7 +107,7 @@ class CategoryService {
               await expenseRecordService.getExpenseRecordBasedOnType(
             category.id,
             year,
-            week,
+            week: week,
           );
           category.expense = expense;
         }
@@ -116,8 +116,7 @@ class CategoryService {
               await expenseRecordService.getExpenseRecordBasedOnType(
             category.id,
             year,
-            null,
-            month,
+            month: month,
           );
           category.expense = expense;
         }
@@ -126,5 +125,54 @@ class CategoryService {
     } catch (e) {
       return [];
     }
+  }
+
+  Stream<List<CategoryData>> getCategoriesWithExpensesStream(int year,
+      {int? week, int? month}) {
+    ExpenseRecordService expenseRecordService = ExpenseRecordService();
+    User? user = auth.currentUser;
+    if (user == null) {
+      throw Exception('No user is currently signed in.');
+    }
+    var query = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid) // Replace with actual user ID
+        .collection('categories');
+
+    // Stream of Firestore documents
+    return query.snapshots().asyncMap((snapshot) async {
+      List<CategoryData> categories = snapshot.docs.map((doc) {
+        final data = doc.data();
+        return CategoryData(
+          id: doc.id,
+          icon: data['icon'] ?? '',
+          name: data['name'] ?? '',
+          budget: (data['budgeted'] ?? 0).toDouble(),
+          type: data['type'] ?? '',
+        );
+      }).toList();
+
+      // For each category, fetch and update the expense based on week or month
+      for (CategoryData category in categories) {
+        if (week != null) {
+          double expense =
+              await expenseRecordService.getExpenseRecordBasedOnType(
+            category.id,
+            year,
+            week: week,
+          );
+          category.expense = expense; // Update category with weekly expense
+        } else if (month != null) {
+          double expense =
+              await expenseRecordService.getExpenseRecordBasedOnType(
+            category.id,
+            year,
+            month: month,
+          );
+          category.expense = expense; // Update category with monthly expense
+        }
+      }
+      return categories; // Return the updated list of categories
+    });
   }
 }

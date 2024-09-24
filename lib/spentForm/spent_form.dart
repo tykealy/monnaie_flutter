@@ -53,7 +53,6 @@ class SpentFormState extends State<SpentForm> {
 
   submitHandler(GlobalKey<FormState> formKey, BuildContext context) async {
     if (formKey.currentState != null && formKey.currentState!.validate()) {
-      // Fetch the text inputs from the form controllers
       double enteredAmount = double.parse(amount.text);
       String selectedDate = _dateC.text;
       String enteredDescription = description.text;
@@ -65,8 +64,9 @@ class SpentFormState extends State<SpentForm> {
           description: enteredDescription,
           type: selectedCategory);
 
-      final result = ExpenseRecordService().saveExpense(expense);
-      if (await result) {
+      final result = await ExpenseRecordService().saveExpense(expense);
+      if (!context.mounted) return;
+      if (result) {
         Navigator.of(context).pop();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -137,7 +137,8 @@ class SpentFormState extends State<SpentForm> {
                           onTapOutside: (event) => FocusScope.of(context)
                               .unfocus(), // Unfocus the text field
                           cursorColor: Colors.black,
-                          keyboardType: TextInputType.number,
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
                           decoration: const InputDecoration(
                             contentPadding: EdgeInsets.only(
                                 left: 20, right: 20, top: 15, bottom: 15),

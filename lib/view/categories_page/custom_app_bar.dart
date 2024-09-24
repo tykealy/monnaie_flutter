@@ -26,7 +26,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               label: 'Cancel',
               action: () {
                 Navigator.of(context).pop(false);
-                Navigator.pop(context);
               },
             ),
             StyledButton(
