@@ -38,9 +38,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
   bool hasChanges() {
     _categories.removeWhere((category) => category.name.isEmpty);
     _deletedCategoryIds.removeWhere((id) => id.isEmpty);
-    // print(_initialCategories.length);
-    // print(_initialDeletedCategoryIds);
-    // print(_deletedCategoryIds);
     return !const Equality().equals(_categories, _initialCategories) ||
         !const Equality()
             .equals(_deletedCategoryIds, _initialDeletedCategoryIds);
