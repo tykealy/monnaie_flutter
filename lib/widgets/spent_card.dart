@@ -1,9 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:monnaie/view/categories_page/categories_page.dart';
 import 'package:monnaie/widgets/styled_button.dart';
+import "../service/total_expense_service.dart";
 
-class SpentCard extends StatelessWidget {
+class SpentCard extends StatefulWidget {
   const SpentCard({super.key});
+  @override
+  State<SpentCard> createState() => _SpentCardState();
+}
+
+class _SpentCardState extends State<SpentCard> {
+  late String total = '';
+  @override
+  void initState() {
+    super.initState();
+    _fetchTotalExpense();
+  }
+
+  Future<void> _fetchTotalExpense() async {
+    String fetchedTotal = await TotalExpenseService().getTotal("Monthly");
+    setState(() {
+      total = fetchedTotal;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +51,9 @@ class SpentCard extends StatelessWidget {
                           "Total Spent",
                           style: TextStyle(fontSize: 13),
                         ),
-                        const Text(
-                          "7777\$",
-                          style: TextStyle(
+                        Text(
+                          total,
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 24),
                         ),
                         Row(
