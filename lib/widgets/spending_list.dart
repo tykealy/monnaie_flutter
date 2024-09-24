@@ -46,14 +46,16 @@ class SpendingListState extends State<SpendingList> {
     year = getYear(DateTime.now());
 
     if (widget.name == 'Weekly') {
-      CategoryService().getCategoriesWithExpenses(year, week).then((value) {
+      CategoryService()
+          .getCategoriesWithExpenses(year, week: week)
+          .then((value) {
         setState(() {
           spendingItems = value;
         });
       });
     } else {
       CategoryService()
-          .getCategoriesWithExpenses(year, week, month)
+          .getCategoriesWithExpenses(year, month: month)
           .then((value) {
         setState(() {
           spendingItems = value;
@@ -98,22 +100,44 @@ class SpendingListState extends State<SpendingList> {
                 )),
           ),
           AnimatedCrossFade(
-            duration: const Duration(milliseconds: 150), // Faster animation
+            duration: const Duration(milliseconds: 150),
             firstChild: Container(),
             secondChild: Container(
               constraints: widget.maxHeight > 0
                   ? BoxConstraints(maxHeight: widget.maxHeight)
                   : null,
               child: SingleChildScrollView(
-                child: Column(
-                  children: spendingItems.map((item) {
-                    return SpendingItem(
-                      icon: item.icon,
-                      name: item.name,
-                      budgeted: item.budget,
-                      left: item.expense,
+                child: StreamBuilder<List<CategoryData>>(
+                  stream: widget.name == 'Weekly'
+                      ? CategoryService()
+                          .getCategoriesWithExpensesStream(year, week: week)
+                      : CategoryService()
+                          .getCategoriesWithExpensesStream(year, month: month),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Container(
+                          alignment: Alignment.center,
+                          child: const CircularProgressIndicator());
+                    }
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Container(
+                          alignment: Alignment.center,
+                          child: const Text('No data available'));
+                    }
+
+                    final spendingItems = snapshot.data!;
+
+                    return Column(
+                      children: spendingItems.map((item) {
+                        return SpendingItem(
+                          icon: item.icon,
+                          name: item.name,
+                          budgeted: item.budget,
+                          left: item.expense,
+                        );
+                      }).toList(),
                     );
-                  }).toList(),
+                  },
                 ),
               ),
             ),

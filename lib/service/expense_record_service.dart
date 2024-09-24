@@ -9,7 +9,7 @@ class ExpenseRecordService {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   Future<double> getExpenseRecordBasedOnType(String categoryId, int year,
-      [int? week, int? month]) async {
+      {int? week, int? month}) async {
     try {
       User? user = auth.currentUser;
       if (user == null) {
@@ -89,7 +89,6 @@ class ExpenseRecordService {
           'date': expenseFirebase.date,
           'description': expenseFirebase.description,
         });
-
         return true;
       } catch (e) {
         return false;
