@@ -65,7 +65,8 @@ class CategoryExpenseProvider with ChangeNotifier {
 
   void saveCategories() async {
     await CategoryService().saveCategories(_categories, _deletedCategoryIds);
-    fetchCategories();
+    fetchData();
+    fetchTotalExpense();
     notifyListeners();
   }
 
