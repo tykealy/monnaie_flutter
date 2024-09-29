@@ -61,7 +61,7 @@ class _SpendingItemState extends State<SpendingItem> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '${widget.budgeted}\$',
+                      '${widget.budgeted.toStringAsFixed(2)}\$',
                       style: const TextStyle(fontSize: 13),
                     ),
                   ],
@@ -73,7 +73,7 @@ class _SpendingItemState extends State<SpendingItem> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '${widget.left}\$',
+                      '${widget.left.toStringAsFixed(2)}\$',
                       style: const TextStyle(fontSize: 13),
                     ),
                   ],

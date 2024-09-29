@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Import the intl package
 import 'package:monnaie/models/category_data.dart';
-import 'package:monnaie/service/category_service.dart';
+import 'package:monnaie/provider/category_expense_provider.dart';
 import 'package:monnaie/service/expense_record_service.dart';
 import 'package:monnaie/widgets/styled_button.dart';
+import 'package:provider/provider.dart';
 import '../models/expense_data.dart';
 
 class SpentForm extends StatefulWidget {
@@ -31,7 +32,7 @@ class SpentFormState extends State<SpentForm> {
   final _formKey = GlobalKey<FormState>();
   final description = TextEditingController();
   final amount = TextEditingController();
-  final CategoryService _categoryService = CategoryService();
+  // final CategoryService _categoryService = CategoryService();
   String? _selectedCategory;
 
   List<CategoryData> _categories = [];
@@ -39,7 +40,9 @@ class SpentFormState extends State<SpentForm> {
 
   Future<void> _fetchCategories() async {
     try {
-      List<CategoryData> categories = await _categoryService.getCategories();
+      List<CategoryData> categories =
+          Provider.of<CategoryExpenseProvider>(context, listen: false)
+              .categories;
       setState(() {
         _categories = categories;
         _isLoading = false;
@@ -67,6 +70,8 @@ class SpentFormState extends State<SpentForm> {
       final result = await ExpenseRecordService().saveExpense(expense);
       if (!context.mounted) return;
       if (result) {
+        Provider.of<CategoryExpenseProvider>(context, listen: false)
+            .addExpense();
         Navigator.of(context).pop();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
