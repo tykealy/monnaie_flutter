@@ -5,7 +5,6 @@ class CategoryData {
   final double budget;
   final String type;
   late double expense;
-
   CategoryData({
     this.id = '',
     required this.icon,

@@ -74,30 +74,14 @@ class CategoryService {
     }
   }
 
-  Future<List<CategoryData>> getCategoriesWithExpenses(int year,
+  Future<List<CategoryData>> getCategoriesWithExpenses(
+      List<CategoryData> categories, int year,
       {int? week, int? month}) async {
     try {
       User? user = auth.currentUser;
       if (user == null) {
         throw Exception('No user is currently signed in.');
       }
-
-      QuerySnapshot querySnapshot = await firestore
-          .collection('users')
-          .doc(user.uid)
-          .collection('categories')
-          .get();
-
-      final categories = querySnapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
-        return CategoryData(
-          id: doc.id,
-          icon: data['icon'] ?? '',
-          name: data['name'] ?? '',
-          budget: (data['budgeted'] ?? 0).toDouble(),
-          type: data['type'] ?? '',
-        );
-      }).toList();
 
       ExpenseRecordService expenseRecordService = ExpenseRecordService();
 

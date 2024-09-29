@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:monnaie/provider/category_expense_provider.dart';
 import 'package:monnaie/widgets/styled_button.dart';
+import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppBar(
-      {super.key, required this.onSave, required this.hasChanges});
-  final bool Function() hasChanges;
-  final VoidCallback onSave;
-
+  const CustomAppBar({super.key});
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
@@ -60,14 +58,22 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           margin: const EdgeInsets.only(right: 24),
           child: StyledButton(
             action: () async {
-              if (hasChanges()) {
+              if (Provider.of<CategoryExpenseProvider>(context, listen: false)
+                  .hasChanges()) {
                 bool? confirmed = await showConfirmationDialog(context);
 
-                if (confirmed == true) {
-                  onSave();
+                if (confirmed == true && context.mounted) {
+                  Provider.of<CategoryExpenseProvider>(context, listen: false)
+                      .saveCategories();
+                } else if (confirmed == false && context.mounted) {
+                  Provider.of<CategoryExpenseProvider>(context, listen: false)
+                      .removeAddedCategory();
                 }
               }
-              if (context.mounted) Navigator.pop(context);
+
+              if (context.mounted) {
+                Navigator.pop(context);
+              }
             },
             icon: const Icon(Icons.check),
             width: 35,
