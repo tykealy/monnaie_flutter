@@ -5,10 +5,12 @@ import 'package:logger/logger.dart';
 import 'package:monnaie/widgets/add_screen.dart';
 import 'package:monnaie/widgets/spending_list.dart';
 import 'package:monnaie/widgets/spent_card.dart';
+import 'package:provider/provider.dart';
 import '../../service/category_service.dart';
 import '../../models/category_data.dart';
+import '../../provider/category_expense_provider.dart';
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
   const MyHomePage({
     super.key,
     required this.title,
@@ -16,6 +18,18 @@ class MyHomePage extends StatelessWidget {
   });
   final String title;
   final String photoUrl;
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<CategoryExpenseProvider>(context, listen: false).fetchData();
+  }
+
   @override
   Widget build(BuildContext context) {
     final Logger logger = Logger();
@@ -45,7 +59,7 @@ class MyHomePage extends StatelessWidget {
               ),
               child: CircleAvatar(
                 radius: 5,
-                backgroundImage: NetworkImage(photoUrl),
+                backgroundImage: NetworkImage(widget.photoUrl),
               ),
             ),
           ),
@@ -56,7 +70,7 @@ class MyHomePage extends StatelessWidget {
                 offset: const Offset(
                     -6, 12), // Adjust to move title closer to leading
                 child: Text(
-                  "Bonjour, $title",
+                  "Bonjour, ${widget.title}",
                   style: const TextStyle(color: Colors.black, fontSize: 16),
                 ),
               ),

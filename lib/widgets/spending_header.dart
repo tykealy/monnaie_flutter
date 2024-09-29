@@ -69,12 +69,12 @@ class _SpendingHeaderState extends State<SpendingHeader> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       const Text(
-                        "Total",
+                        "Left",
                         style: TextStyle(
                             fontWeight: FontWeight.w300, fontSize: 12),
                       ),
                       Text(
-                        "${widget.total}\$",
+                        "${widget.budgeted - widget.total}\$",
                         style: const TextStyle(fontSize: 12),
                       ),
                     ],

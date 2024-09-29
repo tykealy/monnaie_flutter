@@ -1,43 +1,103 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:monnaie/models/category_data.dart';
 import 'package:monnaie/service/category_service.dart';
+import 'package:monnaie/service/total_expense_service.dart';
 
 class CategoryExpenseProvider with ChangeNotifier {
-  final CategoryService _categoryService = CategoryService();
+  String _totalSpent = '';
+  String get totalSpent => _totalSpent;
 
-  List<CategoryData> _weeklyCategoriesWithExpenses = [];
-  List<CategoryData> _monthlyCategoriesWithExpenses = [];
-  bool _isLoading = true;
+  int _addedCategoryNumber = 0;
+  List _weeklyCategoryExpenses = [];
+  List get weeklyCategoryExpenses => _weeklyCategoryExpenses;
 
-  List<CategoryData> get weeklyCategoriesWithExpenses =>
-      _weeklyCategoriesWithExpenses;
-  List<CategoryData> get monthlyCategoriesWithExpenses =>
-      _monthlyCategoriesWithExpenses;
+  List _monthlyCategoryExpenses = [];
+  List get monthlyCategoryExpenses => _monthlyCategoryExpenses;
 
-  bool get isLoading => _isLoading;
+  List<CategoryData> _initialCategories = [];
+  final List<String> _initialDeletedCategoryIds = [];
+  List<CategoryData> _categories = [];
+  List<CategoryData> get categories => _categories;
 
-  Future<void> fetchCategories(String weekly) async {
-    _isLoading = true;
-    notifyListeners();
+  final List<String> _deletedCategoryIds = [];
+  List<String> get deletedCategoryIds => _deletedCategoryIds;
 
-    final week = getWeekOfYear(DateTime.now());
-    final month = getMonth(DateTime.now());
-    final year = getYear(DateTime.now());
-
-    weekly == 'Weekly'
-        ? _weeklyCategoriesWithExpenses =
-            await _categoryService.getCategoriesWithExpenses(year, week: week)
-        : _monthlyCategoriesWithExpenses = await _categoryService
-            .getCategoriesWithExpenses(year, month: month);
-
-    _isLoading = false;
+  Future<void> fetchTotalExpense() async {
+    String fetchedTotal = await TotalExpenseService().getTotal("Monthly");
+    _totalSpent = fetchedTotal;
     notifyListeners();
   }
 
-  Future<void> addCategoryAndExpense() async {
-    // Refetch categories
-    fetchCategories('Weekly');
-    fetchCategories('Monthly');
+  void removeAddedCategory() {
+    if (_addedCategoryNumber == 0) return;
+    _categories.removeRange(0, _addedCategoryNumber);
+    _addedCategoryNumber = 0;
+    notifyListeners();
+  }
+
+  void deleteCategory(int index) {
+    _deletedCategoryIds.add(_categories[index].id);
+    _categories.removeAt(index);
+    notifyListeners();
+  }
+
+  bool hasChanges() {
+    _categories.removeWhere((category) => category.name.isEmpty);
+    _deletedCategoryIds.removeWhere((id) => id.isEmpty);
+    return !const Equality().equals(_categories, _initialCategories) ||
+        !const Equality()
+            .equals(_deletedCategoryIds, _initialDeletedCategoryIds);
+  }
+
+  void addCategory() {
+    _categories.insert(
+        0,
+        CategoryData(
+          icon: '🍔',
+          name: 'New Category',
+          budget: 50,
+          type: 'Weekly',
+        ));
+    _addedCategoryNumber++;
+    notifyListeners();
+  }
+
+  void saveCategories() async {
+    await CategoryService().saveCategories(_categories, _deletedCategoryIds);
+    fetchCategories();
+    notifyListeners();
+  }
+
+  Future getCategoriesWithExpenses(String type) async {
+    int year = getYear(DateTime.now());
+    int week = getWeekOfYear(DateTime.now());
+    int month = getMonth(DateTime.now());
+
+    type == "Weekly"
+        ? _weeklyCategoryExpenses = await CategoryService()
+            .getCategoriesWithExpenses(_categories, year, week: week)
+        : _monthlyCategoryExpenses = await CategoryService()
+            .getCategoriesWithExpenses(_categories, year, month: month);
+    notifyListeners();
+  }
+
+  void editCategory(int index, CategoryData category) {
+    _categories[index] = category;
+    notifyListeners();
+  }
+
+  Future fetchCategories() async {
+    _categories = await CategoryService().getCategories();
+    _initialCategories = List.from(_categories);
+    notifyListeners();
+  }
+
+  Future fetchData() async {
+    await fetchCategories();
+    await getCategoriesWithExpenses('Weekly');
+    await getCategoriesWithExpenses('Monthly');
+    notifyListeners();
   }
 
   int getWeekOfYear(DateTime date) {

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:monnaie/models/category_data.dart';
+import 'package:monnaie/provider/category_expense_provider.dart';
 import 'package:monnaie/widgets/spending_header.dart';
 import 'package:monnaie/widgets/spending_item.dart';
-import '../service/category_service.dart';
+import 'package:provider/provider.dart';
 
 class SpendingList extends StatefulWidget {
   final String name;
@@ -34,34 +35,27 @@ class SpendingListState extends State<SpendingList> {
   }
 
   bool isExpanded = true;
-  late int month;
-  late int week;
-  late int year;
 
   @override
   void initState() {
     super.initState();
-    week = getWeekOfYear(DateTime.now());
-    month = getMonth(DateTime.now());
-    year = getYear(DateTime.now());
-
-    if (widget.name == 'Weekly') {
-      CategoryService()
-          .getCategoriesWithExpenses(year, week: week)
-          .then((value) {
-        setState(() {
-          spendingItems = value;
-        });
-      });
-    } else {
-      CategoryService()
-          .getCategoriesWithExpenses(year, month: month)
-          .then((value) {
-        setState(() {
-          spendingItems = value;
-        });
-      });
-    }
+    // if (widget.name == 'Weekly') {
+    //   CategoryService()
+    //       .getCategoriesWithExpenses(year, week: week)
+    //       .then((value) {
+    //     setState(() {
+    //       spendingItems = value;
+    //     });
+    //   });
+    // } else {
+    //   CategoryService()
+    //       .getCategoriesWithExpenses(year, month: month)
+    //       .then((value) {
+    //     setState(() {
+    //       spendingItems = value;
+    //     });
+    //   });
+    // }
   }
 
   @override
@@ -107,38 +101,28 @@ class SpendingListState extends State<SpendingList> {
                   ? BoxConstraints(maxHeight: widget.maxHeight)
                   : null,
               child: SingleChildScrollView(
-                child: StreamBuilder<List<CategoryData>>(
-                  stream: widget.name == 'Weekly'
-                      ? CategoryService()
-                          .getCategoriesWithExpensesStream(year, week: week)
-                      : CategoryService()
-                          .getCategoriesWithExpensesStream(year, month: month),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Container(
-                          alignment: Alignment.center,
-                          child: const CircularProgressIndicator());
-                    }
-                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Container(
-                          alignment: Alignment.center,
-                          child: const Text('No data available'));
-                    }
-
-                    final spendingItems = snapshot.data!;
-
-                    return Column(
-                      children: spendingItems.map((item) {
-                        return SpendingItem(
-                          icon: item.icon,
-                          name: item.name,
-                          budgeted: item.budget,
-                          left: item.expense,
-                        );
-                      }).toList(),
-                    );
-                  },
-                ),
+                child: Consumer<CategoryExpenseProvider>(
+                    builder: (context, value, child) {
+                  spendingItems = widget.name == 'Weekly'
+                      ? value.weeklyCategoryExpenses.cast<CategoryData>()
+                      : value.monthlyCategoryExpenses.cast<CategoryData>();
+                  return Column(
+                    children: spendingItems.map((item) {
+                      double expense = 0;
+                      try {
+                        expense = item.expense;
+                      } catch (e) {
+                        expense = 0;
+                      }
+                      return SpendingItem(
+                        icon: item.icon,
+                        name: item.name,
+                        budgeted: item.budget,
+                        left: item.budget - expense,
+                      );
+                    }).toList(),
+                  );
+                }),
               ),
             ),
             crossFadeState: isExpanded

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mobkit_dashed_border/mobkit_dashed_border.dart';
 import 'package:monnaie/view/categories_page/category_card.dart';
 import 'package:monnaie/models/category_data.dart';
+import 'package:provider/provider.dart';
+import '../../provider/category_expense_provider.dart';
 
 typedef CategoriesChangedCallback = void Function(
     List<CategoryData> categories);
@@ -11,15 +13,15 @@ typedef DeletedCategoryCallback = void Function(
 class CategoriesPageBody extends StatefulWidget {
   const CategoriesPageBody({
     super.key,
-    required this.deletedCategoryIds,
-    required this.categories,
-    required this.onCategoriesChanged,
-    required this.onDeletedCategoryIdsChanged,
+    // required this.deletedCategoryIds,
+    // required this.categories,
+    // required this.onCategoriesChanged,
+    // required this.onDeletedCategoryIdsChanged,
   });
-  final List<CategoryData> categories;
-  final List<String> deletedCategoryIds;
-  final CategoriesChangedCallback onCategoriesChanged;
-  final DeletedCategoryCallback onDeletedCategoryIdsChanged;
+  // final List<CategoryData> categories;
+  // final List<String> deletedCategoryIds;
+  // final CategoriesChangedCallback onCategoriesChanged;
+  // final DeletedCategoryCallback onDeletedCategoryIdsChanged;
 
   @override
   State<CategoriesPageBody> createState() => _CategoriesPageBodyState();
@@ -32,35 +34,33 @@ class _CategoriesPageBodyState extends State<CategoriesPageBody> {
   @override
   void initState() {
     super.initState();
-    categories = widget.categories;
-    deletedCategoryIds = widget.deletedCategoryIds;
   }
 
-  void addCategory() {
-    setState(() {
-      categories.insert(
-          0,
-          CategoryData(
-            icon: '🍔',
-            name: 'New Category',
-            budget: 50,
-            type: 'Weekly',
-          ));
-    });
-  }
+  // void addCategory() {
+  //   setState(() {
+  //     categories.insert(
+  //         0,
+  //         CategoryData(
+  //           icon: '🍔',
+  //           name: 'New Category',
+  //           budget: 50,
+  //           type: 'Weekly',
+  //         ));
+  //   });
+  // }
 
-  void deleteCategory(int index) {
-    setState(() {
-      deletedCategoryIds.add(categories[index].id);
-      categories.removeAt(index);
-    });
-  }
+  // void deleteCategory(int index) {
+  //   setState(() {
+  //     deletedCategoryIds.add(categories[index].id);
+  //     categories.removeAt(index);
+  //   });
+  // }
 
-  void editCategory(int index, CategoryData category) {
-    setState(() {
-      categories[index] = category;
-    });
-  }
+  // void editCategory(int index, CategoryData category) {
+  //   setState(() {
+  //     categories[index] = category;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -70,16 +70,28 @@ class _CategoriesPageBodyState extends State<CategoriesPageBody> {
         margin: const EdgeInsets.only(bottom: 12),
         child: Column(children: [
           AddCategoryWidget(
-            onAdd: addCategory,
+            onAdd: () {
+              Provider.of<CategoryExpenseProvider>(context, listen: false)
+                  .addCategory();
+            },
           ),
-          ...(categories).asMap().entries.map((entry) {
+          ...(Provider.of<CategoryExpenseProvider>(context).categories)
+              .asMap()
+              .entries
+              .map((entry) {
             int index = entry.key;
             CategoryData category = entry.value;
             return CategoryCard(
               key: ValueKey(category.id),
               category: category,
-              onDelete: () => deleteCategory(index),
-              onModify: (newCategory) => editCategory(index, newCategory),
+              onDelete: () {
+                Provider.of<CategoryExpenseProvider>(context, listen: false)
+                    .deleteCategory(index);
+              },
+              onModify: (newCategory) {
+                Provider.of<CategoryExpenseProvider>(context, listen: false)
+                    .editCategory(index, newCategory);
+              },
             );
           }),
         ]),
