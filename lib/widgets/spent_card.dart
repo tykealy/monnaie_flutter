@@ -47,9 +47,12 @@ class _SpentCardState extends State<SpentCard> {
                             style: TextStyle(fontSize: 13),
                           ),
                           Text(
-                            value.totalSpent,
+                            value.totalSpent.toStringAsFixed(
+                                2), // Limit to 2 decimal places
                             style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 24),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24,
+                            ),
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

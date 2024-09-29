@@ -6,7 +6,7 @@ class TotalExpenseService {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-  Future<String> getTotal(String type) async {
+  Future<double> getTotal(String type) async {
     try {
       User? user = auth.currentUser;
       if (user == null) {
@@ -42,12 +42,12 @@ class TotalExpenseService {
             totalAmount += (expenseDoc['amount'] ?? 0).toDouble();
           }
         }
-        return totalAmount.toString();
+        return totalAmount;
       }
     } catch (e) {
       throw Exception('Failed to get expense record: $e');
     }
-    return "0";
+    return 0;
   }
 
   DateTime parseDateTime(String dateTimeString) {
